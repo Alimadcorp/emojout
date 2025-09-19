@@ -5,6 +5,7 @@ export const runtime = "nodejs";
 
 export async function GET(req, { params }) {
   params = await params;
+  let code = 200;
   let [rawId, sizeStr] = params.id.split(":");
   let size = sizeStr ? Math.min(parseInt(sizeStr, 10), 512) : null;
 
@@ -14,7 +15,7 @@ export async function GET(req, { params }) {
     url = emojiList[url.slice(6)];
     depth++;
   }
-  if (!url) return new Response("Not found", { status: 404 });
+  if (!url) { url = emojiList["parrotnotfound"]; code = 404; }
 
   const res = await fetch(url);
   if (!res.ok) return new Response("Failed to fetch image", { status: 502 });
@@ -46,6 +47,6 @@ export async function GET(req, { params }) {
   }
 
   return new Response(output, {
-    headers: { "Content-Type": contentType },
+    headers: { "Content-Type": contentType, "Status": code },
   });
 }
