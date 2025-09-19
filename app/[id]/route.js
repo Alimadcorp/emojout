@@ -15,7 +15,10 @@ export async function GET(req, { params }) {
     url = emojiList[url.slice(6)];
     depth++;
   }
-  if (!url) { url = emojiList["parrotnotfound"]; code = 404; }
+  if (!url) {
+    url = emojiList["parrotnotfound"];
+    code = 404;
+  }
 
   const res = await fetch(url);
   if (!res.ok) return new Response("Failed to fetch image", { status: 502 });
@@ -47,6 +50,7 @@ export async function GET(req, { params }) {
   }
 
   return new Response(output, {
-    headers: { "Content-Type": contentType, "Status": code },
+    headers: { "Content-Type": contentType },
+    status: code,
   });
 }
