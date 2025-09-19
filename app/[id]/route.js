@@ -1,12 +1,13 @@
 // app/[id]/route.js
 import emojiList from "./list.js";
 import sharp from "sharp";
+export const runtime = "nodejs";
 
 export async function GET(req, { params }) {
+  params = await params;
   let [rawId, sizeStr] = params.id.split(":");
-  let size = sizeStr ? parseInt(sizeStr, 10) : null;
+  let size = sizeStr ? Math.min(parseInt(sizeStr, 10), 512) : null;
 
-  // Resolve aliases safely (max depth 10)
   let url = emojiList[rawId];
   let depth = 0;
   while (url?.startsWith("alias:") && depth < 10) {
@@ -15,16 +16,13 @@ export async function GET(req, { params }) {
   }
   if (!url) return new Response("Not found", { status: 404 });
 
-  // Fetch image
   const res = await fetch(url);
   if (!res.ok) return new Response("Failed to fetch image", { status: 502 });
   const buffer = Buffer.from(await res.arrayBuffer());
 
-  // Detect format
   let contentType = res.headers.get("content-type") || "";
   if (!contentType.startsWith("image/")) contentType = "image/png";
 
-  // Resize if needed
   let output = buffer;
   if (size) {
     const image = sharp(buffer).resize(size, size, { fit: "inside" });
@@ -36,12 +34,12 @@ export async function GET(req, { params }) {
       output = await image.jpeg().toBuffer();
       contentType = "image/jpeg";
     } else if (contentType.includes("gif")) {
-      // sharp can't encode gifs (only first frame),
-      // so fallback: convert to PNG
-      output = await image.png().toBuffer();
-      contentType = "image/png";
+      output = await sharp(buffer, { animated: true })
+        .resize(size, size, { fit: "inside" })
+        .webp({ effort: 6 })
+        .toBuffer();
+      contentType = "image/webp";
     } else {
-      // default to webp
       output = await image.webp().toBuffer();
       contentType = "image/webp";
     }
