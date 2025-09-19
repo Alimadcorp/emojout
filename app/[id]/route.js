@@ -1,7 +1,7 @@
 // app/[id]/route.js
 import emojiList from "./list.js";
-import sharp from "sharp";
-export const runtime = "nodejs";
+//import sharp from "sharp";
+export const runtime = "edge";
 
 export async function GET(req, { params }) {
   params = await params;
@@ -28,7 +28,8 @@ export async function GET(req, { params }) {
   if (!contentType.startsWith("image/")) contentType = "image/png";
 
   let output = buffer;
-  if (size) {
+
+  /*if (size) {
     const image = sharp(buffer).resize(size, size, { fit: "inside" });
 
     if (contentType.includes("png")) {
@@ -47,7 +48,7 @@ export async function GET(req, { params }) {
       output = await image.webp().toBuffer();
       contentType = "image/webp";
     }
-  }
+  }*/
 
   return new Response(output, {
     headers: { "Content-Type": contentType },
