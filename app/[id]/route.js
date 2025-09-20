@@ -1,13 +1,11 @@
-// app/[id]/route.js
 import emojiList from "./list.js";
-//import sharp from "sharp";
-export const runtime = "edge";
+import sharp from "sharp";
 
 export async function GET(req, { params }) {
   params = await params;
   let code = 200;
   let [rawId, sizeStr] = params.id.split(":");
-  let size = sizeStr ? Math.min(parseInt(sizeStr, 10), 512) : null;
+  let size = sizeStr ? Math.max(Math.min(parseInt(sizeStr, 10), 512), 8) : null;
 
   let url = emojiList[rawId];
   let depth = 0;
@@ -29,9 +27,8 @@ export async function GET(req, { params }) {
 
   let output = buffer;
 
-  /*if (size) {
+  if (size) {
     const image = sharp(buffer).resize(size, size, { fit: "inside" });
-
     if (contentType.includes("png")) {
       output = await image.png().toBuffer();
       contentType = "image/png";
@@ -48,10 +45,10 @@ export async function GET(req, { params }) {
       output = await image.webp().toBuffer();
       contentType = "image/webp";
     }
-  }*/
+  }
 
   return new Response(output, {
-    headers: { "Content-Type": contentType },
+    headers: { "Content-Type": contentType, "Cache-Control": "max-age=604800000" },
     status: code,
   });
 }

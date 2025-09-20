@@ -6,8 +6,8 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <ul className="font-mono list-inside list-disc text-sm/6 text-center sm:text-left">
           <li>Alimad Emoji CDN</li>
-          <li>GET /:id</li>
-          <li><a href="/heavysob" className="text-blue-500 hover:underline">/heavysob</a></li>
+          <li>GET /:id[:size]</li>
+          <li><a href="/heavysob:128" className="text-blue-500 hover:underline">/heavysob:128</a></li>
         </ul>
       </main>
     </div>
