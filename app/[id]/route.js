@@ -14,8 +14,7 @@ export async function GET(req, { params }) {
     depth++;
   }
   if (!url) {
-    url = emojiList["parrotnotfound"];
-    code = 404;
+    return new Response("Not Found", { status: 404 });
   }
 
   const res = await fetch(url);
