@@ -16,6 +16,7 @@ export async function GET(req, { params }) {
   if (!url) {
     return new Response("Not Found", { status: 404 });
   }
+  url = url.replace("DATA!", "https://projects.iamcal.com/emoji-data/img-apple-64/");
 
   const res = await fetch(url);
   if (!res.ok) return new Response("Failed to fetch image", { status: 502 });
