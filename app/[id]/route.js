@@ -16,7 +16,10 @@ export async function GET(req, { params }) {
   if (!url) {
     return new Response("Not Found", { status: 404 });
   }
-  url = url.replace("DATA!", "https://projects.iamcal.com/emoji-data/img-apple-64/");
+  url = url.replace(
+    "DATA!",
+    "https://projects.iamcal.com/emoji-data/img-apple-64/"
+  );
 
   const res = await fetch(url);
   if (!res.ok) return new Response("Failed to fetch image", { status: 502 });
@@ -48,7 +51,10 @@ export async function GET(req, { params }) {
   }
 
   return new Response(output, {
-    headers: { "Content-Type": contentType, "Cache-Control": "max-age=604800000" },
     status: code,
+    headers: {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=604800, immutable",
+    },
   });
 }
